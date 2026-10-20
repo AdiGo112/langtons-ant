@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e3ecd9">
+  <title>Langton’s Ant Wiki</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Ant Lab home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <span>Ant Lab</span>
+      </a>
+      <nav class="topnav" aria-label="Pages">
+        <a href="index.html">Lab</a>
+        <a href="wiki.html" aria-current="page">Wiki</a>
+      </nav>
+    </header>
+
+    <header class="wiki-hero">
+      <h1><span class="h1-wide">Langton’s ant</span></h1>
+      <p class="wiki-lede">A two-dimensional Turing machine with two rules, and a famous example of order emerging from chaos. Everything below can be watched happening in the <a href="index.html">lab</a>.</p>
+    </header>
+
+    <div class="wiki-layout">
+      <nav class="toc" aria-label="On this page">
+        <span class="block-label">On this page</span>
+        <a href="#history">History</a>
+        <a href="#rules">The rules</a>
+        <a href="#phases">Three phases</a>
+        <a href="#highway">The highway</a>
+        <a href="#proven">What’s been proven</a>
+        <a href="#colours">More colours</a>
+        <a href="#ants">Ant by ant</a>
+        <a href="#facts">Odd facts</a>
+        <a href="#lab">How the lab runs it</a>
+        <a href="#sources">Sources</a>
+      </nav>
+
+      <article class="wiki-article">
+        <section id="history">
+          <h2>History</h2>
+          <p>Christopher Langton described the ant in 1986, in a paper on studying artificial life with cellular automata. He was looking for the simplest systems that still show lifelike behaviour: patterns that build, spread and organise themselves. A year later he organised the first Artificial Life workshop at Los Alamos, which helped launch artificial life as a field.</p>
+          <p>The ant is a <em>turmite</em>: a Turing machine whose tape is a two-dimensional grid. It has no memory beyond the direction it faces, yet what it draws is still not fully understood almost forty years later.</p>
+        </section>
+
+        <section id="rules">
+          <h2>The rules</h2>
+          <p>Start with an infinite grid of white squares and one ant facing up. Every step:</p>
+          <pre class="code"><code>if the square is white:  turn right 90°
+else (it is black):      turn left 90°
+flip the square's colour
+move forward one square</code></pre>
+          <p>That is the whole program. Its rule string is <span class="mono">RL</span>: the first colour (white) turns <strong>R</strong>ight, the second (black) turns <strong>L</strong>eft.</p>
+        </section>
+
+        <section id="phases">
+          <h2>Three phases</h2>
+          <p>Started on an empty grid, the ant always goes through the same three phases. These pictures are drawn live by this page, using the rules above.</p>
+          <div class="phases">
+            <figure>
+              <canvas data-rule="RL" data-steps="400" aria-label="The pattern after 400 steps"></canvas>
+              <figcaption><strong>Simplicity</strong> · step 400. Small patterns, often symmetric.</figcaption>
+            </figure>
+            <figure>
+              <canvas data-rule="RL" data-steps="6000" aria-label="The pattern after 6,000 steps"></canvas>
+              <figcaption><strong>Chaos</strong> · step 6,000. An irregular blob with no visible structure.</figcaption>
+            </figure>
+            <figure>
+              <canvas data-rule="RL" data-steps="12000" aria-label="The pattern after 12,000 steps, with the highway leaving the blob"></canvas>
+              <figcaption><strong>Order</strong> · step 12,000. The highway heads off diagonally.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section id="highway">
+          <h2>The highway</h2>
+          <p>At step 9,977 the ant falls into a cycle of 104 steps. At the end of each cycle it is exactly two squares further along a diagonal, and the strip behind it is the same as before. It repeats this forever, laying down a straight band called the highway.</p>
+          <p>The lab’s simulation reproduces both numbers: from step 9,977 onward, every 104 steps move the ant by (−2, +2) and add exactly 12 black squares.</p>
+          <p>The highway seems to be an attractor. Every finite starting pattern anyone has tried eventually produces one. Nobody has proved this is always true.</p>
+        </section>
+
+        <section id="proven">
+          <h2>What’s been proven</h2>
+          <dl class="wiki-facts">
+            <div>
+              <dt>The ant never stays put</dt>
+              <dd>Whatever the starting grid, the ant’s path is unbounded: it can’t stay inside any finite region forever. This is known as the Cohen–Kong theorem, and it appears in Bunimovich and Troubetzkoy (1992).</dd>
+            </div>
+            <div>
+              <dt>The ant can compute</dt>
+              <dd>Gajardo, Moreira and Goles (2002) showed how to lay out a starting grid so that a single ant’s path calculates any Boolean circuit. So predicting what the ant will do from an arbitrary start is a hard computational problem.</dd>
+            </div>
+            <div>
+              <dt>Still open</dt>
+              <dd>Whether every finite starting pattern eventually leads to a highway.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="colours">
+          <h2>More colours</h2>
+          <p>Greg Turk and Jim Propp extended the ant to more than two colours. Each colour has its own turn, and when the ant leaves a cell it moves that cell on to the next colour in the cycle. The rule is named by its list of turns, one per colour, so the classic ant is <span class="mono">RL</span>: on colour 1 (white) turn right, on colour 2 (black) turn left.</p>
+          <pre class="code"><code>look up the turn for this cell's colour, and turn
+move the cell on to the next colour (the last wraps round to white)
+move forward one cell</code></pre>
+          <p>The same idea works on a <strong>hexagonal grid</strong>, where each cell has six neighbours and the ant can turn by any multiple of 60°: <span class="mono">N</span> (no turn), <span class="mono">R₁</span> (60° clockwise), <span class="mono">R₂</span> (120° clockwise), <span class="mono">U</span> (180°), <span class="mono">L₂</span> (120° anticlockwise) and <span class="mono">L₁</span> (60° anticlockwise).</p>
+          <p>Ants like these, and their relatives with more than one internal state, are called <em>turmites</em>, short for “Turing machine termites”. The behaviours that keep turning up are highways, chaotic growth and spirals, and all three appear below.</p>
+        </section>
+
+        <section id="ants">
+          <h2>Ant by ant</h2>
+          <p>Every picture is drawn live by this page from a blank grid. The colour strip shows each rule’s cycle: a cell starts white, and each visit moves it one colour to the right, wrapping back to white. The letter next to each colour is the turn the ant makes there. Facts marked <em>measured</em> come from running the same rules the lab runs. All nine ants run in the <a href="index.html">lab</a>: pick one under <strong>Rule</strong>.</p>
+          <div class="ant-cards">
+            <article class="ant-card" id="ant-RL">
+              <figure>
+                <canvas data-rule="RL" data-steps="12000" aria-label="The RL pattern after 12,000 steps"></canvas>
+                <figcaption>12,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">RL</span> <span class="ant-kind">Square · 2 colours · the classic</span></h3>
+                <div class="cycle" data-cycle="RL"></div>
+                <p>Simple patterns for a few hundred steps, then thousands of steps of chaos, then a highway that never ends.</p>
+                <p><strong>Highway:</strong> from step 9,977 the ant repeats a 104-step cycle that moves it 2 squares diagonally and adds exactly 12 black squares each time <em>(measured)</em>.</p>
+                <p>Every finite starting pattern anyone has tried ends in this same highway, but nobody has proved that it always will.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-LLRR">
+              <figure>
+                <canvas data-rule="LLRR" data-steps="200000" aria-label="The LLRR pattern after 200,000 steps"></canvas>
+                <figcaption>200,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">LLRR</span> <span class="ant-kind">Square · 4 colours</span></h3>
+                <div class="cycle" data-cycle="LLRR"></div>
+                <p>Grows as a compact, symmetric blob.</p>
+                <p><strong>Why symmetric:</strong> its name, read round in a circle, is made of pairs of identical letters (LL, RR). That is enough to guarantee that the pattern is mirror-symmetric again and again, forever; the proof uses Truchet tiles. <span class="mono">RLLR</span> qualifies too, because the R at the end wraps round to pair with the R at the start.</p>
+                <p>In its first 60,000 steps, LLRR’s pattern is exactly mirror-symmetric at 1,878 different moments, spread through the whole run (RLLR: 1,367). RLR, which has no such pairs, manages it only 4 times <em>(measured)</em>.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-RLR">
+              <figure>
+                <canvas data-rule="RLR" data-steps="200000" aria-label="The RLR pattern after 200,000 steps"></canvas>
+                <figcaption>200,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">RLR</span> <span class="ant-kind">Square · 3 colours</span></h3>
+                <div class="cycle" data-cycle="RLR"></div>
+                <p>Grows chaotically, in a ragged blob with no visible structure.</p>
+                <p><strong>Open question:</strong> nobody knows whether it ever builds a highway. The lab found no repeating cycle up to 2,000 steps long anywhere in its first 2 million steps <em>(measured)</em>.</p>
+                <p>It spreads slowly: going from 100,000 to 1.6 million steps, 16 times longer, only takes its width from 120 to 258 squares <em>(measured)</em>.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-LRRRRRLLR">
+              <figure>
+                <canvas data-rule="LRRRRRLLR" data-steps="200000" aria-label="The LRRRRRLLR pattern after 200,000 steps"></canvas>
+                <figcaption>200,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">LRRRRRLLR</span> <span class="ant-kind">Square · 9 colours</span></h3>
+                <div class="cycle" data-cycle="LRRRRRLLR"></div>
+                <p>Fills space in a solid square around itself, with diagonal streaks running through it.</p>
+                <p><strong>Packed:</strong> 96–98% of the cells inside its bounding square are coloured, and the square stays square as it grows: 87 squares wide at 50,000 steps, 180 at 200,000, 437 at 800,000 <em>(measured)</em>.</p>
+                <p>Each time the step count goes up 4×, the side roughly doubles, so the filled area grows in step with the number of steps.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-LLRRRLRLRLLR">
+              <figure>
+                <canvas data-rule="LLRRRLRLRLLR" data-steps="60000" aria-label="The LLRRRLRLRLLR pattern after 60,000 steps"></canvas>
+                <figcaption>60,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">LLRRRLRLRLLR</span> <span class="ant-kind">Square · 12 colours</span></h3>
+                <div class="cycle" data-cycle="LLRRRLRLRLLR"></div>
+                <p>Builds a convoluted highway: a thick, knotted band instead of RL’s neat diagonal strip.</p>
+                <p><strong>Its cycle:</strong> from about step 29,890 the ant repeats a cycle of 1,968 steps, and each cycle moves it 16 squares in a straight line, along a row rather than a diagonal <em>(measured)</em>.</p>
+                <p>That cycle is almost 19 times longer than the classic ant’s 104 steps.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-RRLLLRLLLRRR">
+              <figure>
+                <canvas data-rule="RRLLLRLLLRRR" data-steps="60000" aria-label="The RRLLLRLLLRRR pattern after 60,000 steps"></canvas>
+                <figcaption>60,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">RRLLLRLLLRRR</span> <span class="ant-kind">Square · 12 colours</span></h3>
+                <div class="cycle" data-cycle="RRLLLRLLLRRR"></div>
+                <p>After a chaotic start, builds a filled triangle that keeps growing and moving.</p>
+                <p><strong>When it starts:</strong> Wikipedia puts the switch at around 15,900 steps. In the lab its bounding box grows by only 3 squares between steps 10,000 and 15,000, then steadily: 39 × 49 at 16,000, 92 × 102 at 40,000, 136 × 146 at 80,000 <em>(measured)</em>.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-L2NNL1L2L1">
+              <figure>
+                <canvas data-rule="L2NNL1L2L1" data-steps="300000" aria-label="The L2NNL1L2L1 pattern after 300,000 steps"></canvas>
+                <figcaption>300,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">L₂NNL₁L₂L₁</span> <span class="ant-kind">Hexagonal · 6 colours</span></h3>
+                <div class="cycle" data-cycle="L2NNL1L2L1"></div>
+                <p>Grows into a lumpy blob full of round holes.</p>
+                <p>Two of its colours are <span class="mono">N</span>, “no turn”, so the ant often runs straight through cells.</p>
+                <p><strong>Not quite as advertised:</strong> Wikipedia describes it as growing circularly, with a picture of a ring. From a blank grid, the lab never forms a clean ring, even after 3 million steps <em>(measured)</em>; the published picture probably came from a different set-up.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-L1L2NUL2L1R2">
+              <figure>
+                <canvas data-rule="L1L2NUL2L1R2" data-steps="200000" aria-label="The L1L2NUL2L1R2 pattern after 200,000 steps"></canvas>
+                <figcaption>200,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">L₁L₂NUL₂L₁R₂</span> <span class="ant-kind">Hexagonal · 7 colours</span></h3>
+                <div class="cycle" data-cycle="L1L2NUL2L1R2"></div>
+                <p>Grows in a spiral, with the hexagonal grid giving it a hexagonal outline.</p>
+                <p><strong>Steady growth:</strong> about 3 cells end up coloured for every 10 steps: 30,094 cells after 100,000 steps, 481,399 after 1.6 million. Its width doubles each time the steps go up 4× (299 → 593 → 1,160) <em>(measured)</em>.</p>
+              </div>
+            </article>
+            <article class="ant-card" id="ant-R1R2NUR2R1L2">
+              <figure>
+                <canvas data-rule="R1R2NUR2R1L2" data-steps="200000" aria-label="The R1R2NUR2R1L2 pattern after 200,000 steps"></canvas>
+                <figcaption>200,000 steps</figcaption>
+              </figure>
+              <div>
+                <h3><span class="mono">R₁R₂NUR₂R₁L₂</span> <span class="ant-kind">Hexagonal · 7 colours</span></h3>
+                <div class="cycle" data-cycle="R1R2NUR2R1L2"></div>
+                <p>The previous ant with every left turn swapped for a right turn, so from the same start it draws the same spiral, flipped.</p>
+                <p><strong>Exact mirror:</strong> after 200,000 steps both have 60,186 coloured cells, and their ants stand at mirror-image positions, (182, 4) and (182, −4) <em>(measured)</em>. Wikipedia lists it as an “animation”, which probably describes how its picture was made.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="facts">
+          <h2>Odd facts</h2>
+          <dl class="wiki-facts">
+            <div>
+              <dt>Every ant can run backwards</dt>
+              <dd>Given where the ant stands and which way it faces, its previous step is fully determined: step back, return that cell to its previous colour, and undo the turn that colour calls for. So no information is ever lost. Running RL, RRLLLRLLLRRR and L₁L₂NUL₂L₁R₂ forward 100,000 steps and then back again returns a blank grid with the ant at the start, facing its first direction, every time <em>(measured)</em>.</dd>
+            </div>
+            <div>
+              <dt>Swap L and R, get a mirror image</dt>
+              <dd>Flipping every turn reflects the whole run, which is why the two spiral ants above are twins. The same goes for square ants: <span class="mono">LR</span> draws the classic ant’s pattern, mirrored.</dd>
+            </div>
+            <div>
+              <dt>The highway is tidy</dt>
+              <dd>The classic highway adds exactly 12 black squares every 104 steps, so far out along it the number of black squares grows by a steady 12 per cycle <em>(measured)</em>.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="lab">
+          <h2>How the lab runs it</h2>
+          <ul class="wiki-list">
+            <li><strong>Storage.</strong> The grid is split into 256 × 256 tiles of bytes, one byte per cell holding its colour, created only where the ant has been. Hex cells use the same tiles: rows stay rows, and odd rows count as shifted half a cell to the right. Zoomed in, they’re drawn as real hexagons; zoomed out, where a cell is only a few pixels, the fast pixel drawing takes over. A step is a lookup, a flip and a move, so 5 million steps take about a tenth of a second.</li>
+            <li><strong>Drawing.</strong> Each frame copies just the visible squares into one image the size of the screen. When zoomed out, a screen pixel turns black if any square it covers is black, so the highway stays visible at any zoom.</li>
+            <li><strong>Speed.</strong> The simulation gets a fixed slice of each frame. If your device can’t keep up with the speed you chose, the lab runs as fast as it can and shows the real rate next to the slider.</li>
+          </ul>
+        </section>
+
+        <section id="sources">
+          <h2>Sources</h2>
+          <ol class="sources">
+            <li>Langton, C. G. (1986). “Studying artificial life with cellular automata.” <em>Physica D</em> 22(1–3): 120–149. <a href="https://doi.org/10.1016/0167-2789(86)90237-X">doi:10.1016/0167-2789(86)90237-X</a></li>
+            <li>Bunimovich, L. A. &amp; Troubetzkoy, S. E. (1992). “Recurrence properties of Lorentz lattice gas cellular automata.” <em>Journal of Statistical Physics</em> 67(1–2): 289–302. <a href="https://doi.org/10.1007/BF01049035">doi:10.1007/BF01049035</a></li>
+            <li>Gajardo, A., Moreira, A. &amp; Goles, E. (2002). “Complexity of Langton’s ant.” <em>Discrete Applied Mathematics</em> 117(1–3): 41–50. <a href="https://doi.org/10.1016/S0166-218X(00)00334-6">doi:10.1016/S0166-218X(00)00334-6</a></li>
+            <li>Gale, D., Propp, J., Sutherland, S. &amp; Troubetzkoy, S. (1995). “Further travels with my ant.” <em>The Mathematical Intelligencer</em>.</li>
+            <li><a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton’s ant</a>, Wikipedia.</li>
+          </ol>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    // Draw each figure by running its rule from a blank grid for its step count, then fitting the pattern.
+    // Same colours and turn conventions as the lab. Hex cells use axial coordinates (q, r).
+    const COLORS = ["#17241d", "#2f7d6d", "#c99a2e", "#3f6fb5", "#7d5aa6", "#8a5a2b",
+      "#7a9a3a", "#b0668e", "#5f6b66", "#1f4f7a", "#4fa3a3"];
+    const TURNS = { R: 1, L: 3, N: 0, L1: 1, L2: 2, U: 3, R2: 4, R1: 5 };
+    const SQUARE_MOVES = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    const HEX_MOVES = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+
+    function drawFigure(canvas) {
+      const tokens = canvas.dataset.rule.match(/[LR][12]|[LRNU]/g);
+      const hex = /[12NU]/.test(canvas.dataset.rule);
+      const moves = hex ? HEX_MOVES : SQUARE_MOVES;
+      const turns = tokens.map(turn => TURNS[turn]);
+      const grid = new Map();
+      let x = 0, y = 0, dir = 0;
+      for (let i = 0; i < Number(canvas.dataset.steps); i++) {
+        const key = x + "," + y;
+        const state = grid.get(key) || 0;
+        dir = (dir + turns[state]) % moves.length;
+        const next = (state + 1) % turns.length;
+        if (next) grid.set(key, next); else grid.delete(key);
+        x += moves[dir][0];
+        y += moves[dir][1];
+      }
+      // World position of a cell: hex rows are shifted by half a cell per row and packed √3/2 apart.
+      const rowScale = hex ? Math.sqrt(3) / 2 : 1;
+      const place = (cx, cy) => [hex ? cx + cy / 2 : cx, cy * rowScale];
+      const cells = [...grid].map(([key, state]) => [...place(...key.split(",").map(Number)), state]);
+      const [ax, ay] = place(x, y);
+      let minX = ax, maxX = ax, minY = ay, maxY = ay;
+      for (const [cx, cy] of cells) {
+        minX = Math.min(minX, cx); maxX = Math.max(maxX, cx);
+        minY = Math.min(minY, cy); maxY = Math.max(maxY, cy);
+      }
+      const size = canvas.clientWidth;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.height = Math.round(size * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      const cell = size * 0.86 / (Math.max(maxX - minX, maxY - minY) + 1);
+      const ox = (size - (maxX - minX + 1) * cell) / 2 - minX * cell;
+      const oy = (size - (maxY - minY + 1) * cell) / 2 - minY * cell;
+      const w = Math.max(cell, 1);
+      const h = Math.max(cell * rowScale, 1);
+      for (const [cx, cy, state] of cells) {
+        ctx.fillStyle = COLORS[state - 1];
+        ctx.fillRect(ox + cx * cell, oy + cy * cell, w, h);
+      }
+      ctx.fillStyle = "#c8322a";
+      ctx.fillRect(ox + ax * cell - 1, oy + ay * cell - 1, Math.max(cell, 2) + 2, Math.max(cell, 2) + 2);
+    }
+
+    // One figure per task, so the page stays responsive while the bigger ones run.
+    for (const strip of document.querySelectorAll("[data-cycle]")) {
+      strip.replaceChildren(...strip.dataset.cycle.match(/[LR][12]|[LRNU]/g).map((turn, state) => {
+        const item = document.createElement("span");
+        item.className = "legend-item";
+        const swatch = document.createElement("span");
+        swatch.className = "swatch";
+        swatch.style.background = state ? COLORS[state - 1] : "var(--paper-light)";
+        item.append(swatch, turn.replace("1", "₁").replace("2", "₂"));
+        return item;
+      }));
+    }
+
+    const figures = [...document.querySelectorAll("canvas[data-rule]")];
+    (function drawNext() {
+      const canvas = figures.shift();
+      if (!canvas) return;
+      drawFigure(canvas);
+      setTimeout(drawNext, 0);
+    })();
+  </script>
+</body>
+</html>

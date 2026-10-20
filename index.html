@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e3ecd9">
+  <title>Ant Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Ant Lab home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <span>Ant Lab</span>
+      </a>
+      <nav class="topnav" aria-label="Pages">
+        <a href="index.html" aria-current="page">Lab</a>
+        <a href="wiki.html">Wiki</a>
+      </nav>
+      <div class="topbar-meta">
+        <span class="live-dot" id="statusDot"></span>
+        <span id="statusText">PAUSED</span>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div class="intro-text">
+        <h1><span class="h1-wide">One ant,</span> <span class="h1-narrow">two rules.</span></h1>
+        <p class="intro-copy">Christopher Langton’s ant, 1986. It flips the square it stands on and steps forward. For 9,977 steps it makes a mess — then it starts building a highway, and never stops.</p>
+      </div>
+      <div class="facts">
+        <dl>
+          <div class="fact"><dt class="mono">1986</dt><dd>Chris Langton invents the ant while studying artificial life.</dd></div>
+          <div class="fact"><dt class="mono">9,977</dt><dd>steps of chaos before the highway begins.</dd></div>
+          <div class="fact"><dt class="mono">104</dt><dd>steps per highway cycle, moving 2 squares diagonally each time.</dd></div>
+        </dl>
+        <a class="facts-link" href="wiki.html">Read the wiki →</a>
+      </div>
+      <dl class="rule-card" aria-label="The rules">
+        <div class="rule-row">
+          <dt><span class="swatch swatch-white"></span> On a white square</dt>
+          <dd><span class="rule-arrow" aria-hidden="true">↻</span> turn right</dd>
+        </div>
+        <div class="rule-row">
+          <dt><span class="swatch swatch-black"></span> On a black square</dt>
+          <dd><span class="rule-arrow" aria-hidden="true">↺</span> turn left</dd>
+        </div>
+        <div class="rule-foot">Then flip the square and step forward.</div>
+      </dl>
+    </section>
+
+    <section class="workspace" id="workspace">
+      <div class="canvas-panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="panel-kicker">The grid</span>
+            <span class="panel-subtitle">Drag to pan · scroll to zoom</span>
+          </div>
+          <div class="canvas-tools">
+            <button class="icon-button fullscreen-only" id="toolbarPlay" title="Play / pause (Space)" aria-label="Play or pause">▶</button>
+            <input class="fullscreen-only toolbar-speed" id="toolbarSpeed" type="range" min="0" max="1000" step="any" aria-label="Simulation speed">
+            <span class="zoom-label mono fullscreen-only" id="toolbarSpeedValue">100</span>
+            <span class="tool-divider fullscreen-only"></span>
+            <button class="icon-button" id="zoomOut" title="Zoom out (−)" aria-label="Zoom out">−</button>
+            <span class="zoom-label mono" id="zoomLabel">100%</span>
+            <button class="icon-button" id="zoomIn" title="Zoom in (+)" aria-label="Zoom in">+</button>
+            <span class="tool-divider"></span>
+            <button class="icon-button" id="centerAnt" title="Center on ant (0)" aria-label="Center on ant">◎</button>
+            <button class="icon-button" id="followAnt" title="Follow ant (L)" aria-label="Follow ant" aria-pressed="false">◉</button>
+            <button class="icon-button active" id="smoothFollow" title="Smooth follow: the camera glides after the ant instead of locking onto it" aria-label="Smooth follow" aria-pressed="true">≈</button>
+            <button class="icon-button" id="penTool" title="Pen: click or drag to flip squares, right-drag to pan (P)" aria-label="Pen tool" aria-pressed="false">✎</button>
+            <button class="icon-button" id="undoStroke" title="Undo pen stroke (Ctrl+Z)" aria-label="Undo pen stroke">↶</button>
+            <button class="icon-button" id="fullscreen" title="Fullscreen (F)" aria-label="Toggle fullscreen">⛶</button>
+          </div>
+          <button class="icon-button minimize-button" title="Minimize" aria-label="Minimize toolbar" aria-expanded="true">−</button>
+        </div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="world" aria-label="Langton's Ant grid. Drag to pan and use the mouse wheel or pinch to zoom." tabindex="0"></canvas>
+          <div class="canvas-hud hud-bottom-left">
+            <span class="direction-indicator" id="directionIcon" aria-hidden="true">↑</span>
+            <span><span class="hud-label">Ant at</span> <span class="hud-value mono" id="positionValue">0, 0</span></span>
+          </div>
+          <div class="canvas-hud hud-bottom-right">
+            <canvas class="minimap" id="minimap" title="Map: click to jump there" aria-label="Map of the whole pattern. Click to move the view there."></canvas>
+          </div>
+          <div class="canvas-empty" id="emptyHint">
+            <span class="hint-key">Space</span>
+            <span>to start the ant</span>
+          </div>
+        </div>
+        <div class="canvas-footer">
+          <span><kbd>Space</kbd> play / pause</span>
+          <span><kbd>→</kbd> one step</span>
+          <span><kbd>R</kbd> reset</span>
+          <span><kbd>0</kbd> center</span>
+          <span><kbd>L</kbd> follow</span>
+          <span><kbd>P</kbd> pen</span>
+          <span><kbd>Ctrl</kbd><kbd>Z</kbd> undo</span>
+          <span><kbd>F</kbd> fullscreen</span>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="float-bar">
+          <span class="panel-kicker">Controls</span>
+          <button class="icon-button minimize-button" title="Minimize" aria-label="Minimize controls" aria-expanded="true">−</button>
+        </div>
+
+        <div class="block">
+          <div class="block-label">Run</div>
+          <div class="primary-controls">
+            <button class="play-button" id="playPause"><span class="play-icon" id="playIcon">▶</span><span id="playText">Start simulation</span></button>
+            <button class="step-button" id="stepOnce" title="Advance one step (→)">Step</button>
+          </div>
+          <button class="text-button" id="resetAll" title="Clear every square and return the ant to the start (R)">↺ Reset world</button>
+        </div>
+
+        <div class="block">
+          <div class="speed-row">
+            <label class="block-label" for="speed">Speed</label>
+            <span class="speed-readout mono"><span id="speedValue">100</span>/s <span id="actualSpeed"></span></span>
+          </div>
+          <input id="speed" type="range" min="0" max="1000" value="322.67" step="any" aria-describedby="speedValue">
+          <div class="speed-presets" role="group" aria-label="Steps per second">
+            <button data-speed="1" aria-label="1 step per second">1</button>
+            <button data-speed="5" aria-label="5 steps per second">5</button>
+            <button data-speed="10" aria-label="10 steps per second">10</button>
+            <button data-speed="100" class="selected" aria-label="100 steps per second">100</button>
+            <button data-speed="1000" aria-label="1,000 steps per second">1k</button>
+            <button data-speed="5000" aria-label="5,000 steps per second">5k</button>
+            <button data-speed="10000" aria-label="10,000 steps per second">10k</button>
+            <button data-speed="20000" aria-label="20,000 steps per second">20k</button>
+            <button data-speed="50000" aria-label="50,000 steps per second">50k</button>
+            <button data-speed="100000" aria-label="100,000 steps per second">100k</button>
+            <button data-speed="250000" aria-label="250,000 steps per second">250k</button>
+            <button data-speed="500000" aria-label="500,000 steps per second">500k</button>
+          </div>
+        </div>
+
+        <div class="block rule-block">
+          <div class="block-label">Rule</div>
+          <select class="rule-select mono" id="ruleSelect" aria-label="Rule">
+            <optgroup label="Square grid">
+              <option value="RL">RL · classic</option>
+              <option value="LLRR">LLRR</option>
+              <option value="RLR">RLR</option>
+              <option value="LRRRRRLLR">LRRRRRLLR</option>
+              <option value="LLRRRLRLRLLR">LLRRRLRLRLLR</option>
+              <option value="RRLLLRLLLRRR">RRLLLRLLLRRR</option>
+            </optgroup>
+            <optgroup label="Hexagonal grid">
+              <option value="L2NNL1L2L1">L₂NNL₁L₂L₁</option>
+              <option value="L1L2NUL2L1R2">L₁L₂NUL₂L₁R₂</option>
+              <option value="R1R2NUR2R1L2">R₁R₂NUR₂R₁L₂</option>
+            </optgroup>
+          </select>
+          <div class="rule-legend" id="ruleLegend" aria-label="Turn for each colour, in cycle order"></div>
+          <p class="rule-text" id="ruleText">Right on white, left on black. Builds a highway after 9,977 steps.</p>
+          <p class="rule-note" id="ruleNote">Switching rules resets the world.</p>
+        </div>
+
+        <div class="title-block" aria-label="Readings">
+          <div class="tb-cell tb-wide">
+            <span class="block-label">Steps</span>
+            <strong class="tb-value mono" id="stepsValue">0</strong>
+          </div>
+          <div class="tb-cell">
+            <span class="block-label" id="blackLabel">Black squares</span>
+            <strong class="tb-value mono" id="blackValue">0</strong>
+          </div>
+          <div class="tb-cell">
+            <span class="block-label">Heading</span>
+            <strong class="tb-value"><span class="tb-arrow" id="compassNeedle" aria-hidden="true">↑</span> <span id="directionValue">NORTH</span></strong>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
