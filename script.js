@@ -1017,4 +1017,20 @@
   setSpeed(speed);
   setRule("RL");
   resizeCanvas();
+
+  // Hook for tests/run.js, which drives the real page in headless Chrome. The page never uses it.
+  window.antLab = {
+    cellSize: CELL_SIZE,
+    doStep,
+    render,
+    setZoom,
+    setFollow,
+    setSmoothFollow,
+    centerOnAnt,
+    colourAt: (x, y) => {
+      const tile = tiles.get(cellKey(x >> TILE_BITS, y >> TILE_BITS));
+      return tile ? tile.cells[((y & TILE_MASK) << TILE_BITS) | (x & TILE_MASK)] : 0;
+    },
+    state: () => ({ ant: { ...ant }, coloured: blackCount, steps, camera: { ...camera }, width: cssWidth, height: cssHeight })
+  };
 })();

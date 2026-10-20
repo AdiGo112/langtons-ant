@@ -1,0 +1,8 @@
+{
+  "name": "langtons-ant",
+  "private": true,
+  "description": "Langton's ant lab: 9 rules on square and hex grids, pen tool, and a wiki",
+  "scripts": {
+    "test": "node tests/run.js"
+  }
+}
